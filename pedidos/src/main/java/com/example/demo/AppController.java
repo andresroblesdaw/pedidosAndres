@@ -18,62 +18,82 @@ import com.example.demo.dto.User;
 import com.example.demo.service.PedidoService;
 import com.example.demo.service.UserService;
 
+/**
+ * Controlador de la aplicación
+ */
 @RestController
 public class AppController {
 
-	@Autowired
-	private PedidoService orderService;
-	
-	
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private PedidoService orderService;
+    
+    @Autowired
+    private UserService userService;
 
-	@GetMapping("/verPedido")
-	public Pedido getOrder(@RequestParam Long id) {
+    /**
+     * Obtiene un pedido por su ID.
+     *
+     * @param id el ID del pedido a buscar
+     * @return el pedido encontrado
+     */
+    @GetMapping("/verPedido")
+    public Pedido getOrder(@RequestParam Long id) {
+        return orderService.buscarPedido(id);
+    }
+    
+    /**
+     * Procesa un pedido actualizando su estado.
+     *
+     * @param id el ID del pedido a procesar
+     * @param estado el nuevo estado del pedido
+     * @return true si el pedido fue procesado correctamente, false en caso contrario
+     */
+    @PutMapping("/procesarPedido")
+    public boolean processOrder(@RequestParam Long id, @RequestParam Estado estado) {
+        return orderService.procesarPedido(id, estado);
+    }
 
-		return orderService.buscarPedido(id);
+    /**
+     * Obtiene la lista de todos los pedidos.
+     *
+     * @return una lista de todos los pedidos
+     */
+    @GetMapping("/verListadoPedidos")
+    public ArrayList<Pedido> getAllOrders() {
+        return orderService.verPedidos();
+    }
+    
+    /**
+     * Crea un nuevo pedido.
+     *
+     * @param p el pedido a crear
+     * @return el pedido creado
+     */
+    @PostMapping("/crearPedido")
+    public Pedido createOrder(@RequestBody Pedido p) {
+        userService.crearUser(p.getUser());
+        return orderService.crearPedido(p);
+    }
+    
+    /**
+     * Elimina un pedido por su ID.
+     *
+     * @param id el ID del pedido a eliminar
+     * @return true si el pedido fue eliminado correctamente, false en caso contrario
+     */
+    @DeleteMapping("/borrarPedido")
+    public boolean deleteOrder(@RequestParam Long id) {
+        return orderService.borrarPedido(id);
+    }
 
-	}
-	
-	@PutMapping("/procesarPedido")
-	public boolean processOrder(@RequestParam Long id, @RequestParam Estado estado) {
-
-		return orderService.procesarPedido(id, estado);
-
-	}
-
-
-	@GetMapping("/verListadoPedidos")
-	public ArrayList<Pedido> getAllOrders() {
-
-		return orderService.verPedidos();
-
-	}
-	
-	@PostMapping("/crearPedido") 
-	public Pedido createOrder(@RequestBody Pedido p) {
-
-		userService.crearUser(p.getUser());
-		return orderService.crearPedido(p);
-
-	}
-	
-
-
-	@DeleteMapping("/borrarPedido")
-	public boolean deleteOrder(@RequestParam Long id) {
-
-		return orderService.borrarPedido(id);
-
-	}
-
-	
-	@GetMapping("/verUser")
-	public User getUser(@RequestParam Long id) {
-		
-		return userService.buscarUser(id);
-		
-	}
-
-
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * @param id el ID del usuario a buscar
+     * @return el usuario encontrado
+     */
+    @GetMapping("/verUser")
+    public User getUser(@RequestParam Long id) {
+        return userService.buscarUser(id);
+    }
 }
